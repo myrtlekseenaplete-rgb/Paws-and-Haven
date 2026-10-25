@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Adoption Dashboard</title>
+  <style>
+    body{font-family:Arial,sans-serif;margin:24px;background:#f7f8fa;color:#222}
+    .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    a,button{cursor:pointer} .btn{padding:8px 12px;background:#245b45;color:white;text-decoration:none;border:0;border-radius:5px}
+    table{width:100%;border-collapse:collapse;background:white;margin:14px 0 28px}
+    th,td{padding:10px;border:1px solid #ddd;text-align:left} th{background:#e9efeb}
+    select{padding:6px} h2{margin-top:28px}
+  </style>
+</head>
+<body>
+  <div class="top">
+    <h1>Adoption Dashboard</h1>
+    <a class="btn" href="/adoptions/new">New Application</a>
+  </div>
+
+  <h2>Adoption Applications</h2>
+  <% if (!applications.length) { %>
+    <p>No adoption applications yet.</p>
+  <% } else { %>
+  <table>
+    <thead><tr><th>ID</th><th>Applicant</th><th>Animal</th><th>Date</th><th>Status</th><th>Update status</th><th>Process</th></tr></thead>
+    <tbody>
+    <% applications.forEach(app => { %>
+      <tr>
+        <td><%= app.application_id %></td>
+        <td><%= app.full_name %></td>
+        <td><%= app.animal_name %></td>
+        <td><%= app.application_date %></td>
+        <td><%= app.status %></td>
+        <td>
+          <form method="POST" action="/adoptions/<%= app.application_id %>/status">
+            <select name="status">
+              <% ['Pending','Approved','Rejected','Completed'].forEach(status => { %>
+                <option value="<%= status %>" <%= app.status === status ? 'selected' : '' %>><%= status %></option>
+              <% }) %>
+            </select>
+            <button type="submit">Save</button>
+          </form>
+        </td>
+        <td><a href="/adoptions/<%= app.application_id %>/process">Process adoption</a></td>
+      </tr>
+    <% }) %>
+    </tbody>
+  </table>
+  <% } %>
+
+  <h2>Completed Adoption Records</h2>
+  <% if (!adoptions.length) { %>
+    <p>No completed adoptions yet.</p>
+  <% } else { %>
+  <table>
+    <thead><tr><th>Adoption ID</th><th>Applicant</th><th>Animal</th><th>Date</th><th>Fee</th><th>Contract</th></tr></thead>
+    <tbody>
+    <% adoptions.forEach(item => { %>
+      <tr>
+        <td><%= item.adoption_id %></td>
+        <td><%= item.full_name %></td>
+        <td><%= item.animal_name %></td>
+        <td><%= item.adoption_date %></td>
+        <td>₱<%= Number(item.adoption_fee).toFixed(2) %></td>
+        <td><%= item.contract_details || '—' %></td>
+      </tr>
+    <% }) %>
+    </tbody>
+  </table>
+  <% } %>
+</body>
+</html>

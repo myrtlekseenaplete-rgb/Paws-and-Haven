@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>New Adoption Application</title>
+  <style>body{font-family:Arial,sans-serif;max-width:600px;margin:32px auto;padding:0 16px}label{display:block;margin-top:14px}input,textarea{box-sizing:border-box;width:100%;padding:9px;margin-top:5px}button{margin-top:16px;padding:9px 14px;background:#245b45;color:white;border:0;border-radius:5px}.error{color:#b00020}</style>
+</head>
+<body>
+  <h1>New Adoption Application</h1>
+  <% if (error) { %><p class="error"><%= error %></p><% } %>
+  <form method="POST" action="/adoptions">
+    <label>User ID<input type="number" name="user_id" min="1" required></label>
+    <label>Animal ID<input type="number" name="animal_id" min="1" required></label>
+    <label>Application date<input type="date" name="application_date"></label>
+    <label>Notes<textarea name="notes" rows="4" placeholder="Optional notes"></textarea></label>
+    <button type="submit">Submit Application</button>
+  </form>
+  <p><a href="/adoptions">Back to dashboard</a></p>
+</body>
+</html>

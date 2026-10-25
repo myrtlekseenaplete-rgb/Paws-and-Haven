@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Process Adoption</title>
+  <style>body{font-family:Arial,sans-serif;max-width:650px;margin:32px auto;padding:0 16px}label{display:block;margin-top:14px}input,textarea{box-sizing:border-box;width:100%;padding:9px;margin-top:5px}button{margin-top:16px;padding:9px 14px;background:#245b45;color:white;border:0;border-radius:5px}.error{color:#b00020}</style>
+</head>
+<body>
+  <h1>Process Adoption</h1>
+  <% if (error) { %><p class="error"><%= error %></p><% } %>
+  <p><strong>Application ID:</strong> <%= application.application_id %></p>
+  <p><strong>Applicant:</strong> <%= application.full_name %></p>
+  <p><strong>Animal:</strong> <%= application.animal_name %></p>
+  <p><strong>Current status:</strong> <%= application.status %></p>
+  <form method="POST" action="/adoptions/<%= application.application_id %>/process">
+    <label>Adoption date<input type="date" name="adoption_date" required></label>
+    <label>Adoption fee (₱)<input type="number" name="adoption_fee" min="0" step="0.01" value="0.00" required></label>
+    <label>Contract details<textarea name="contract_details" rows="4" placeholder="Example: Adoption contract signed"></textarea></label>
+    <button type="submit">Finalize Adoption</button>
+  </form>
+  <p><a href="/adoptions">Back to dashboard</a></p>
+</body>
+</html>
