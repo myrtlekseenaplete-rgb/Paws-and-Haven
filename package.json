@@ -1,0 +1,30 @@
+{
+  "name": "paws-and-haven",
+  "version": "1.0.0",
+  "description": "Pet rescue, adoption and veterinary foster management system",
+  "keywords": [
+    "Dbms",
+    "1",
+    "sia",
+    "Final",
+    "Activity"
+  ],
+  "homepage": "https://github.com/myrtlekseenaplete-rgb/Paws-and-Haven#readme",
+  "bugs": {
+    "url": "https://github.com/myrtlekseenaplete-rgb/Paws-and-Haven/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/myrtlekseenaplete-rgb/Paws-and-Haven.git"
+  },
+  "license": "ISC",
+  "author": "plete, chavez, nawanao, nillas, rodriguez",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.3.0"
+  }
+}
