@@ -1,8 +1,30 @@
--- ===========================================
--- MEMBER E (Myrtle): Medical Records & Vets
--- ===========================================
+ feature/gladys-auth-pets
+Users Table
+CREATE TABLE IF NOT EXISTS users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  full_name VARCHAR(100) NOT NULL,
+  email VARCHAR(100) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  role ENUM('admin', 'vet', 'staff', 'owner') DEFAULT 'owner',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
--- 1. Veterinarians Table
+Pets Table
+CREATE TABLE IF NOT EXISTS pets (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  owner_id INT NOT NULL,
+  name VARCHAR(50) NOT NULL,
+  species VARCHAR(30) NOT NULL,
+  breed VARCHAR(50),
+  age INT,
+  gender ENUM('male', 'female') NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
+
+  
+ MEMBER E (Myrtle): Medical Records & Vets
+
+1. Veterinarians Table
 CREATE TABLE IF NOT EXISTS veterinarians (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -11,7 +33,7 @@ CREATE TABLE IF NOT EXISTS veterinarians (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 2. Vaccination Schedules Table
+2. Vaccination Schedules Table
 CREATE TABLE IF NOT EXISTS vaccination_schedules (
     id INT AUTO_INCREMENT PRIMARY KEY,
     animal_id INT NOT NULL, -- Links to Member C's animals/rescues table
@@ -22,7 +44,7 @@ CREATE TABLE IF NOT EXISTS vaccination_schedules (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 3. Medical Records Table
+3. Medical Records Table
 CREATE TABLE IF NOT EXISTS medical_records (
     id INT AUTO_INCREMENT PRIMARY KEY,
     animal_id INT NOT NULL, -- Links to Member C's animals/rescues table
@@ -33,4 +55,5 @@ CREATE TABLE IF NOT EXISTS medical_records (
     notes TEXT,
     FOREIGN KEY (vet_id) REFERENCES veterinarians(id) ON DELETE SET NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+main
 );
