@@ -1,0 +1,31 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Animals – Paws and Haven</title>
+<style>body{font-family:sans-serif;margin:16px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:6px;font-size:14px}
+input,select{margin:3px;padding:6px}.Available{color:green}.Fostered{color:#b8860b}.Adopted{color:#06c}</style></head><body>
+<h2>Animal Rescue Intake</h2>
+<form id="f">
+<input name="name" placeholder="Name" required>
+<input name="species_id" type="number" placeholder="Species ID" required>
+<input name="breed_id" type="number" placeholder="Breed ID">
+<input name="branch_id" type="number" placeholder="Branch ID" required>
+<input name="age_months" type="number" min="0" placeholder="Age (months)" required>
+<select name="gender"><option>Male</option><option>Female</option></select>
+<input name="health_status" placeholder="Health status">
+<input name="admission_date" type="date" required>
+<button>Add Animal</button></form>
+<table><thead><tr><th>ID</th><th>Name</th><th>Species</th><th>Breed</th><th>Age (mo)</th><th>Health</th><th>Status</th><th></th></tr></thead><tbody id="t"></tbody></table>
+<script>
+async function load(){
+  const rows = await (await fetch('/api/animals')).json();
+  t.innerHTML = rows.map(a=>`<tr><td>${a.animal_id}</td><td>${a.name}</td><td>${a.species_name||a.species_id}</td><td>${a.breed_name||'-'}</td>
+  <td>${a.age_months}</td><td>${a.health_status}</td><td class="${a.status}">${a.status}</td>
+  <td><button onclick="del(${a.animal_id})">Delete</button></td></tr>`).join('');
+}
+f.onsubmit = async e => {
+  e.preventDefault();
+  const r = await fetch('/api/animals',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.fromEntries(new FormData(f)))});
+  if(!r.ok) alert((await r.json()).error); else { f.reset(); load(); }
+};
+async function del(id){ if(!confirm('Delete?'))return; const r=await fetch('/api/animals/'+id,{method:'DELETE'}); if(!r.ok) alert((await r.json()).error); load(); }
+load();
+</script></body></html>

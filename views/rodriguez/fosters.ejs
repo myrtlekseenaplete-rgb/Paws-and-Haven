@@ -1,0 +1,39 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Foster Management – Paws and Haven</title>
+<style>body{font-family:sans-serif;margin:16px}table{border-collapse:collapse;width:100%;margin-bottom:20px}th,td{border:1px solid #ccc;padding:6px;font-size:14px}input,select{margin:3px;padding:6px}</style></head><body>
+<h2>Foster Dashboard (LEFT JOIN Report)</h2>
+<table><thead><tr><th>Animal</th><th>Status</th><th>Foster Parent</th><th>Start</th><th>End</th></tr></thead><tbody id="rep"></tbody></table>
+
+<h2>Foster Applicants</h2>
+<form id="af"><input name="user_id" type="number" placeholder="User ID" required>
+<select name="housing_type"><option>House</option><option>Apartment</option><option>Condo</option><option>Other</option></select>
+<select name="experience_level"><option>Beginner</option><option>Intermediate</option><option>Experienced</option></select>
+<button>Apply</button></form>
+<table><thead><tr><th>ID</th><th>Name</th><th>Housing</th><th>Experience</th><th>Approval</th><th></th></tr></thead><tbody id="ap"></tbody></table>
+
+<h2>Assign Foster</h2>
+<form id="sf"><input name="animal_id" type="number" placeholder="Animal ID" required>
+<input name="applicant_id" type="number" placeholder="Applicant ID" required>
+<input name="start_date" type="date" required><button>Assign</button></form>
+<table><thead><tr><th>ID</th><th>Animal</th><th>Foster Parent</th><th>Start</th><th>End</th><th>Status</th><th></th></tr></thead><tbody id="as"></tbody></table>
+
+<script>
+const J=(m,b)=>({method:m,headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});
+const d=x=>x?String(x).slice(0,10):'';
+async function load(){
+  const rep=await (await fetch('/api/animals/report/foster-dashboard')).json();
+  document.getElementById('rep').innerHTML=rep.map(r=>`<tr><td>${r.animal_name}</td><td>${r.animal_status}</td><td>${r.foster_parent||'—'}</td><td>${d(r.start_date)}</td><td>${d(r.end_date)}</td></tr>`).join('');
+  const ap=await (await fetch('/api/fosters/applicants')).json();
+  document.getElementById('ap').innerHTML=ap.map(a=>`<tr><td>${a.applicant_id}</td><td>${a.full_name}</td><td>${a.housing_type}</td><td>${a.experience_level}</td><td>${a.approval_status}</td>
+  <td><button onclick="appr(${a.applicant_id},'Approved')">Approve</button> <button onclick="appr(${a.applicant_id},'Rejected')">Reject</button></td></tr>`).join('');
+  const as=await (await fetch('/api/fosters/assignments')).json();
+  document.getElementById('as').innerHTML=as.map(a=>`<tr><td>${a.assignment_id}</td><td>${a.animal_name}</td><td>${a.foster_parent}</td><td>${d(a.start_date)}</td><td>${d(a.end_date)}</td><td>${a.status}</td>
+  <td>${a.status==='Active'?`<button onclick="endF(${a.assignment_id})">End</button>`:''}</td></tr>`).join('');
+}
+async function call(p,o){const r=await fetch(p,o); if(!r.ok) alert((await r.json()).error); load();}
+const appr=(id,s)=>call(`/api/fosters/applicants/${id}/approval`,J('PATCH',{approval_status:s}));
+const endF=id=>call(`/api/fosters/assignments/${id}/end`,J('PATCH',{status:'Completed'}));
+af.onsubmit=e=>{e.preventDefault();call('/api/fosters/applicants',J('POST',Object.fromEntries(new FormData(af))));af.reset();};
+sf.onsubmit=e=>{e.preventDefault();call('/api/fosters/assignments',J('POST',Object.fromEntries(new FormData(sf))));sf.reset();};
+load();
+</script></body></html>
