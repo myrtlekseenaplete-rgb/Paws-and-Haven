@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Audit Logs - Paws and Haven</title>
+<style>
+body { font-family: Arial; padding: 25px; background: #f4f6f9; }
+table { width: 100%; background: white; border-collapse: collapse; }
+th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+th { background: #198754; color: white; }
+</style>
+</head>
+<body>
+<h2>System Activity Logs</h2>
+
+<table>
+<tr>
+<th>User</th>
+<th>Action</th>
+<th>Date</th>
+</tr>
+
+<% if (logs && logs.length > 0) { %>
+<% logs.forEach(log => { %>
+<tr>
+<td><%= log.username %></td>
+<td><%= log.action %></td>
+<td><%= log.created_at %></td>
+</tr>
+<% }) %>
+<% } else { %>
+<tr>
+<td colspan="3">No activity recorded.</td>
+</tr>
+<% } %>
+</table>
+
+<p><a href="/rules/settings">Back to Rule Settings</a></p>
+</body>
+</html>
