@@ -19,7 +19,36 @@ CREATE TABLE IF NOT EXISTS pets (
   age INT,
   gender ENUM('male', 'female') NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
+  FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCA
+
+);
+
+-- Roles Table
+CREATE TABLE IF NOT EXISTS roles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE
+);
+
+-- Species Table
+CREATE TABLE IF NOT EXISTS species (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE
+);
+
+-- Breeds Table
+CREATE TABLE IF NOT EXISTS breeds (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    species_id INT NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    FOREIGN KEY (species_id) REFERENCES species(id) ON DELETE CASCADE
+);
+
+-- Shelter Branches Table
+CREATE TABLE IF NOT EXISTS shelter_branches (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    branch_name VARCHAR(100) NOT NULL,
+    location VARCHAR(255) NOT NULL
+
 
   
  MEMBER E (Myrtle): Medical Records & Vets
