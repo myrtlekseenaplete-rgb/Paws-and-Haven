@@ -26,3 +26,4 @@ INSERT INTO foster_applicants (user_id,housing_type,experience_level,approval_st
 INSERT INTO foster_assignments (animal_id,applicant_id,start_date,end_date,status) VALUES
 (2,1,'2026-09-05',NULL,'Active'),
 (3,3,'2026-07-12','2026-08-20','Completed');
+
