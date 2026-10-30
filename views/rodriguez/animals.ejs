@@ -13,13 +13,32 @@ input,select{margin:3px;padding:6px}.Available{color:green}.Fostered{color:#b886
 <input name="health_status" placeholder="Health status">
 <input name="admission_date" type="date" required>
 <button>Add Animal</button></form>
-<table><thead><tr><th>ID</th><th>Name</th><th>Species</th><th>Breed</th><th>Age (mo)</th><th>Health</th><th>Status</th><th></th></tr></thead><tbody id="t"></tbody></table>
+<table><thead><tr><th>ID</th><th>Name</th><th>Species</th><th>Breed</th><th>Age (mo)</th><th>Health</th><th>Status</th><th></th></tr></thead><tbody id="t">
+<% if (animals && animals.length) { %>
+  <% animals.forEach(a => { %>
+    <tr>
+      <td><%= a.animal_id %></td>
+      <td><%= a.name %></td>
+      <td><%= a.species_name || a.species_id %></td>
+      <td><%= a.breed_name || '-' %></td>
+      <td><%= a.age_months %></td>
+      <td><%= a.health_status || '-' %></td>
+      <td class="<%= a.status %>"><%= a.status %></td>
+      <td><button type="button" onclick="del(<%= a.animal_id %>)">Delete</button></td>
+    </tr>
+  <% }) %>
+<% } else { %>
+  <tr><td colspan="8">No rescued animals found.</td></tr>
+<% } %>
+</tbody></table>
 <script>
 async function load(){
-  const rows = await (await fetch('/api/animals')).json();
-  t.innerHTML = rows.map(a=>`<tr><td>${a.animal_id}</td><td>${a.name}</td><td>${a.species_name||a.species_id}</td><td>${a.breed_name||'-'}</td>
-  <td>${a.age_months}</td><td>${a.health_status}</td><td class="${a.status}">${a.status}</td>
-  <td><button onclick="del(${a.animal_id})">Delete</button></td></tr>`).join('');
+  const response = await fetch('/api/animals');
+  if (!response.ok) { alert('Unable to load animals.'); return; }
+  const rows = await response.json();
+  t.innerHTML = rows.length ? rows.map(a=>`<tr><td>${a.animal_id}</td><td>${a.name}</td><td>${a.species_name||a.species_id}</td><td>${a.breed_name||'-'}</td>
+  <td>${a.age_months}</td><td>${a.health_status || '-'}</td><td class="${a.status}">${a.status}</td>
+  <td><button type="button" onclick="del(${a.animal_id})">Delete</button></td></tr>`).join('') : '<tr><td colspan="8">No rescued animals found.</td></tr>';
 }
 f.onsubmit = async e => {
   e.preventDefault();
@@ -27,5 +46,5 @@ f.onsubmit = async e => {
   if(!r.ok) alert((await r.json()).error); else { f.reset(); load(); }
 };
 async function del(id){ if(!confirm('Delete?'))return; const r=await fetch('/api/animals/'+id,{method:'DELETE'}); if(!r.ok) alert((await r.json()).error); load(); }
-load();
+// Initial rows are rendered by EJS. Reload from the API after form actions.
 </script></body></html>
