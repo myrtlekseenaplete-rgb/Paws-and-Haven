@@ -1,10 +1,15 @@
 const MasterData = require('../models/MasterData');
 
-exports.getSpeciesAndBreeds = async (req, res) => {
-  try {
-    const species = await MasterData.getAllSpecies();
-    res.render('member-A/master-data', { species });
-  } catch (err) {
-    res.status(500).send('Error loading master data.');
-  }
+const masterDataController = {
+    getSpeciesAndBranches: async (req, res) => {
+        try {
+            const species = await MasterData.getAllSpecies();
+            const branches = await MasterData.getAllBranches();
+            res.render('nillas/master-data', { species, branches });
+        } catch (err) {
+            res.status(500).send('Server Error fetching master data.');
+        }
+    }
 };
+
+module.exports = masterDataController;
