@@ -1,4 +1,4 @@
-const { FosterProfile } = require('./fosterModels'); // Adjust path to your file
+const { FosterProfile } = require('./fosterModels'); 
 
 async function findMatchingFosters(petSize, requiresMedical) {
   try {
