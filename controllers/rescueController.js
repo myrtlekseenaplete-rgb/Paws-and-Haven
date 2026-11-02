@@ -1,69 +1,37 @@
-const RescueRequest = require('../models/rescueModel');
-const { FosterProfile, Placement } = require('../models/fosterModel');
-const { findEligibleFosters } = require('../services/smartPlacementService');
+const { Rescue, Foster } = require('../models/rescueFosterModel');
 
-// Submit new rescue request
-exports.createRescueRequest = async (req, res) => {
+// UNIQUE FEATURE: Smart Match & Place Algorithm
+exports.smartMatchFoster = async (req, res) => {
   try {
-    const newRescue = new RescueRequest(req.body);
-    await newRescue.save();
-    res.status(201).json({ message: 'Rescue request submitted successfully', data: newRescue });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
+    const animal = await Rescue.findById(req.params.id);
+    
+    // 1. Find available fosters matching the animal's size and capacity
+    const availableFosters = await Foster.find({ 
+      isAvailable: true,
+      allowedSizes: animal.size 
+    });
 
-// Get all rescue requests
-exports.getRescueRequests = async (req, res) => {
-  try {
-    const requests = await RescueRequest.find();
-    res.render('rescueDashboard', { requests });
-  } catch (error) {
-    res.status(500).send('Error loading dashboard');
-  }
-};
-
-// UNIQUE FEATURE: Match & Auto-Assign Foster
-exports.autoMatchAndPlace = async (req, res) => {
-  try {
-    const { rescueId } = req.params;
-    const rescue = await RescueRequest.findById(rescueId);
-
-    if (!rescue) return res.status(404).json({ error: 'Rescue request not found' });
-
-    // Run Smart Placement Engine
-    const matches = await findEligibleFosters(rescue);
-
-    if (matches.length === 0) {
-      return res.status(400).json({ message: 'No eligible foster parents available at this time.' });
+    if (availableFosters.length === 0) {
+      return res.json({ message: "No matching foster found." });
     }
 
-    // Select top candidate
-    const bestMatch = matches[0].foster;
+    // 2. Pick the best foster (highest remaining capacity)
+    const bestFoster = availableFosters.sort((a, b) => 
+      (b.maxCapacity - b.currentPlacements) - (a.maxCapacity - a.currentPlacements)
+    )[0];
 
-    // Create Placement Record
-    const newPlacement = new Placement({
-      rescueRequestId: rescue._id,
-      fosterProfileId: bestMatch._id
-    });
-    await newPlacement.save();
-
-    // Update Rescue & Foster statuses
-    rescue.status = 'Placed';
-    await rescue.save();
-
-    bestMatch.currentActivePlacements += 1;
-    if (bestMatch.currentActivePlacements >= bestMatch.maxCapacity) {
-      bestMatch.isAvailable = false;
+    // 3. Update records
+    bestFoster.currentPlacements += 1;
+    if (bestFoster.currentPlacements >= bestFoster.maxCapacity) {
+      bestFoster.isAvailable = false;
     }
-    await bestMatch.save();
+    await bestFoster.save();
 
-    res.status(200).json({
-      message: 'Smart placement successful!',
-      matchedFoster: bestMatch.fullName,
-      placement: newPlacement
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    animal.status = 'Placed';
+    await animal.save();
+
+    res.json({ success: true, matchedTo: bestFoster.name });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };
