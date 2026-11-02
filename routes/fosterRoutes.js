@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { FosterProfile } = require('../models/fosterModel');
 
-// Foster registration
+
 router.post('/apply', async (req, res) => {
   try {
     const profile = new FosterProfile(req.body);
@@ -13,7 +13,6 @@ router.post('/apply', async (req, res) => {
   }
 });
 
-// View foster dashboard
 router.get('/dashboard', async (req, res) => {
   const fosters = await FosterProfile.find();
   res.render('fosterDashboard', { fosters });
