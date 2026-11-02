@@ -1,27 +1,37 @@
-const mongoose = require("mongoose");
+const { Rescue, Foster } = require('../models/rescueFosterModel');
 
-const rescueRequestSchema = new mongoose.Schema({
-  animalName: { type: String, default: "Unknown" },
-  species: { type: String, required: true }, // 'Dog', 'Cat', etc.
-  size: { type: String, enum: ["Small", "Medium", "Large"], required: true },
-  specialNeeds: [{ type: String }], // e.g. ['Medical', 'No Other Pets', 'Puppy']
-  urgency: {
-    type: String,
-    enum: ["Low", "Medium", "High", "Critical"],
-    default: "Medium",
-  },
-  location: {
-    address: { type: String, required: true },
-    city: String,
-    coordinates: { lat: Number, lng: Number },
-  },
-  status: {
-    type: String,
-    enum: ["Pending", "Approved", "Placed", "Rejected"],
-    default: "Pending",
-  },
-  reportedBy: { type: String, required: true }, // User ID or Contact Info
-  createdAt: { type: Date, default: Date.now },
-});
+// UNIQUE FEATURE: Smart Match & Place Algorithm
+exports.smartMatchFoster = async (req, res) => {
+  try {
+    const animal = await Rescue.findById(req.params.id);
+    
+    // 1. Find available fosters matching the animal's size and capacity
+    const availableFosters = await Foster.find({ 
+      isAvailable: true,
+      allowedSizes: animal.size 
+    });
 
-module.exports = mongoose.model("RescueRequest", rescueRequestSchema);
+    if (availableFosters.length === 0) {
+      return res.json({ message: "No matching foster found." });
+    }
+
+    // 2. Pick the best foster (highest remaining capacity)
+    const bestFoster = availableFosters.sort((a, b) => 
+      (b.maxCapacity - b.currentPlacements) - (a.maxCapacity - a.currentPlacements)
+    )[0];
+
+    // 3. Update records
+    bestFoster.currentPlacements += 1;
+    if (bestFoster.currentPlacements >= bestFoster.maxCapacity) {
+      bestFoster.isAvailable = false;
+    }
+    await bestFoster.save();
+
+    animal.status = 'Placed';
+    await animal.save();
+
+    res.json({ success: true, matchedTo: bestFoster.name });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
