@@ -5,7 +5,6 @@ exports.smartMatchFoster = async (req, res) => {
   try {
     const animal = await Rescue.findById(req.params.id);
     
-    // 1. Find available fosters matching the animal's size and capacity
     const availableFosters = await Foster.find({ 
       isAvailable: true,
       allowedSizes: animal.size 
