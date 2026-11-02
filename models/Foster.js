@@ -1,29 +1,23 @@
-const mongoose = require('mongoose');
+const { FosterProfile } = require('./fosterModels'); // Adjust path to your file
 
-const fosterProfileSchema = new mongoose.Schema({
-  userId: { type: String, required: true, unique: true },
-  fullName: { type: String, required: true },
-  email: { type: String, required: true },
-  phone: String,
-  maxCapacity: { type: Number, default: 2 },
-  currentActivePlacements: { type: Number, default: 0 },
-  allowedSizes: [{ type: String, enum: ['Small', 'Medium', 'Large'] }],
-  hasOtherPets: { type: Boolean, default: false },
-  canHandleMedical: { type: Boolean, default: false },
-  isApproved: { type: Boolean, default: false },
-  isAvailable: { type: Boolean, default: true }
-});
+async function findMatchingFosters(petSize, requiresMedical) {
+  try {
+    const availableFosters = await FosterProfile.find({
+      
+      isApproved: true,
+      isAvailable: true,
+      allowedSizes: petSize,
 
-const placementSchema = new mongoose.Schema({
-  rescueRequestId: { type: mongoose.Schema.Types.ObjectId, ref: 'RescueRequest', required: true },
-  fosterProfileId: { type: mongoose.Schema.Types.ObjectId, ref: 'FosterProfile', required: true },
-  startDate: { type: Date, default: Date.now },
-  endDate: { type: Date },
-  status: { type: String, enum: ['Active', 'Completed', 'Terminated'], default: 'Active' },
-  notes: String
-});
+    
+      ...(requiresMedical && { canHandleMedical: true }),
 
-module.exports = {
-  FosterProfile: mongoose.model('FosterProfile', fosterProfileSchema),
-  Placement: mongoose.model('Placement', placementSchema)
-};
+    
+      $expr: { $lt: ['$currentActivePlacements', '$maxCapacity'] }
+    });
+
+    return availableFosters;
+  } catch (error) {
+    console.error('Error finding fosters:', error);
+    throw error;
+  }
+}
