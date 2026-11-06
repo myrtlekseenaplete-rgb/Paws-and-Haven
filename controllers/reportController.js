@@ -1,9 +1,9 @@
-const Medical = require('../models/Models');
+const Medical = require('../models/Medical');
 
-exports.getMedcialReports = async (requestAnimationFrame, res) => {
+exports.getMedicalReports = async (req, res) => {
     try {
         const vetAuditLogs = await Medical.getvetAuditLogs();
-        const completeMEdicalHistory = await Medical.getCompleteMedicalHistory();
+        const completeMedicalHistory = await Medical.getCompleteMedicalHistory();
 
         res.status(200).json({
             sucess: true,

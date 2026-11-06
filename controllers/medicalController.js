@@ -1,41 +1,44 @@
-const MedicalRecord = require('../models/MedicalRecord');
+const Medical = require('../models/Medical');
 
 const medicalController = {
-    // Render the medical logs page with all records
     renderMedicalLogs: async (req, res) => {
         try {
-            const records = await MedicalRecord.getAll();
-            res.render('plete/medical-logs', { records });
-        } catch (error) {
-            console.error("Error fetching medical logs:", error);
-            res.status(500).send("Server Error");
+            const logs = await Medical.getVetAuditlogs();
+            res.render('medical-logs', { logs });
+        } catch (err) {
+            res.status(500).send('Server Error: ' + err.message);
         }
     },
-
-    // Handle creating a new medical record
+    renderCreateForm: async (req, res) => {
+        try {
+            const logs = await Medical.getVetAuditlogs();
+            res.render('medical-logs', { logs }); // Renders the consolidated page containing the form & table
+        } catch (err) {
+            res.status(500).send('Server Error: ' + err.message);
+        }
+    },
     createRecord: async (req, res) => {
         try {
-            await MedicalRecord.create(req.body);
+            const recordData = {
+                pet_id: req.body.animal_id || req.body.pet_id,
+                vet_id: req.body.vet_id,
+                diagnosis: req.body.diagnosis,
+                treatment: req.body.treatment,
+                record_date: req.body.record_date,
+                notes: req.body.notes
+            };
+            await Medical.create(recordData);
             res.redirect('/medical');
-        } catch (error) {
-            console.error("Error creating medical record:", error);
-            res.status(500).send("Server Error");
+        } catch (err) {
+            res.status(500).send('Server Error: ' + err.message);
         }
     },
-
-    // Render the special Join Reports page (Right Join & Full Outer Join)
     renderJoinReports: async (req, res) => {
         try {
-            const rightJoinData = await MedicalRecord.getRightJoinReport();
-            const fullOuterJoinData = await MedicalRecord.getFullOuterJoinReport();
-            
-            res.render('plete/join-reports', { 
-                rightJoin: rightJoinData, 
-                fullOuterJoin: fullOuterJoinData 
-            });
-        } catch (error) {
-            console.error("Error fetching join reports:", error);
-            res.status(500).send("Server Error");
+            const reports = await Medical.getCompleteMedicalHistory();
+            res.render('medical-reports', { reports });
+        } catch (err) {
+            res.status(500).send('Server Error: ' + err.message);
         }
     }
 };
