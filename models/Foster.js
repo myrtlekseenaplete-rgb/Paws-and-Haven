@@ -2,7 +2,7 @@ const db = require('../config/db');
 const Animal = require('./Animal');
 
 const Foster = {
-  
+  // ----- Applicants -----
   async getApplicants() {
     const [rows] = await db.query(
       `SELECT fap.*, u.full_name FROM foster_applicants fap
@@ -20,7 +20,7 @@ const Foster = {
     return r.affectedRows;
   },
 
-  // 
+  // ----- Assignments -----
   async getAssignments() {
     const [rows] = await db.query(
       `SELECT fa.*, a.name AS animal_name, u.full_name AS foster_parent
@@ -31,7 +31,7 @@ const Foster = {
        ORDER BY fa.assignment_id DESC`);
     return rows;
   },
-
+  // Assign: creates assignment + animal becomes 'Fostered' (atomic)
   async assign(animal_id, applicant_id, start_date) {
     const conn = await db.getConnection();
     try {
@@ -50,7 +50,7 @@ const Foster = {
     } catch (e) { await conn.rollback(); throw e; }
     finally { conn.release(); }
   },
- 
+  // End: assignment Completed/Cancelled + animal back to 'Available'
   async end(assignment_id, status, end_date) {
     const conn = await db.getConnection();
     try {
