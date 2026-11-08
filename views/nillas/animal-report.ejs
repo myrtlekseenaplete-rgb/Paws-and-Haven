@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Animal INNER JOIN Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #eee;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Animal Species and Shelter Branch Report</h1>
+    <p>Report 1 - INNER JOIN</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Animal</th>
+                <th>Species</th>
+                <th>Breed</th>
+                <th>Shelter Branch</th>
+                <th>Age (Months)</th>
+                <th>Gender</th>
+                <th>Health</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <% animals.forEach(animal => { %>
+                <tr>
+                    <td><%= animal.animal_id %></td>
+                    <td><%= animal.animal_name %></td>
+                    <td><%= animal.species_name %></td>
+                    <td><%= animal.breed_name %></td>
+                    <td><%= animal.branch_name %></td>
+                    <td><%= animal.age_months %></td>
+                    <td><%= animal.gender %></td>
+                    <td><%= animal.health_status %></td>
+                    <td><%= animal.status %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+
+    <br>
+    <a href="/">Back to Home</a>
+
+</body>
+</html>
