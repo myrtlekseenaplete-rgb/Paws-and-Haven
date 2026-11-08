@@ -7,4 +7,5 @@ router.patch('/applicants/:id/approval', c.setApproval);
 router.get('/assignments', c.listAssignments);
 router.post('/assignments', c.assign);
 router.patch('/assignments/:id/end', c.end);
-module.exports = router; 
+
+module.exports = router;

@@ -1,8 +1,8 @@
 const db = require('../config/db');
 
 const Medical = {
-    getVetAuditlogs: async () => {
-        const query = ` 
+    getvetAuditLogs: async () => {
+        const query = `
             SELECT
                 record_id AS id,
                 pet_id AS animal_id,
@@ -16,17 +16,17 @@ const Medical = {
         `;
         const [rows] = await db.query(query);
         return rows;
-    },    
-    
+    },
+
     create: async (newData) => {
         const query = "INSERT INTO medical_records SET ?";
         const [result] = await db.query(query, [newData]);
         return result;
     },
-    
+
     getCompleteMedicalHistory: async () => {
         const query = `
-            SELECT 
+            SELECT
                 record_id,
                 pet_id,
                 diagnosis
