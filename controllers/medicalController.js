@@ -4,7 +4,7 @@ const medicalController = {
     renderMedicalLogs: async (req, res) => {
         try {
             const logs = await Medical.getVetAuditlogs();
-            res.render('medical-logs', { logs });
+            res.render('plete/medical-logs', { logs });
         } catch (err) {
             res.status(500).send('Server Error: ' + err.message);
         }
@@ -12,7 +12,7 @@ const medicalController = {
     renderCreateForm: async (req, res) => {
         try {
             const logs = await Medical.getVetAuditlogs();
-            res.render('medical-logs', { logs }); // Renders the consolidated page containing the form & table
+            res.render('plete/medical-logs', { logs });
         } catch (err) {
             res.status(500).send('Server Error: ' + err.message);
         }
@@ -21,11 +21,9 @@ const medicalController = {
         try {
             const recordData = {
                 pet_id: req.body.animal_id || req.body.pet_id,
-                vet_id: req.body.vet_id,
                 diagnosis: req.body.diagnosis,
                 treatment: req.body.treatment,
-                record_date: req.body.record_date,
-                notes: req.body.notes
+                record_date: req.body.record_date
             };
             await Medical.create(recordData);
             res.redirect('/medical');

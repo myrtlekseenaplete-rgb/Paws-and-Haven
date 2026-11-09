@@ -8,7 +8,7 @@ const Medical = {
                 pet_id AS animal_id,
                 diagnosis,
                 treatment,
-                NOW() AS record_date,
+                record_date,
                 'N/A' AS vet_name,
                 'General' AS specialization
             FROM medical_records
