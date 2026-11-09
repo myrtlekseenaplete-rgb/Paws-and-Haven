@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Assigned Join Report 1</title>
+</head>
+<body>
+  <h2>Report 1: Animals with Species and Shelter Branches</h2>
+  <table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+      <tr>
+        <th>Animal ID</th>
+        <th>Animal Name</th>
+        <th>Species</th>
+        <th>Shelter Branch</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (reportData && reportData.length > 0) { %>
+        <% reportData.forEach(row => { %>
+          <tr>
+            <td><%= row.animal_id %></td>
+            <td><%= row.animal_name %></td>
+            <td><%= row.species_name %></td>
+            <td><%= row.shelter_branch_name %></td>
+          </tr>
+        <% }) %>
+      <% } else { %>
+        <tr>
+          <td colspan="4">No records found.</td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</body>
+</html>
