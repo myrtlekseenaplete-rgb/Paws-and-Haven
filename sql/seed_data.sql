@@ -1,17 +1,23 @@
+
+-- =========================================
 -- USERS
+-- =========================================
 INSERT IGNORE INTO users (full_name, email, password, role) VALUES
 ('Gladys Nillas', 'gladys@example.com', '$2b$10$v7sgXEVevAigz9WQ.g7uf.xmGlBF0CV6L2AHk45pxxAp/OAFnrbOW', 'owner'),
 ('Dr. Alex Smith', 'dralex@example.com', '$2b$10$v7sgXEVevAigz9WQ.g7uf.xmGlBF0CV6L2AHk45pxxAp/OAFnrbOW', 'vet');
 
 
+-- =========================================
 -- SPECIES
+-- =========================================
 INSERT IGNORE INTO species (species_name) VALUES
 ('Dog'),
 ('Cat');
 
 
-
+-- =========================================
 -- BREEDS
+-- =========================================
 INSERT INTO breeds (species_id, breed_name)
 SELECT s.species_id, 'Golden Retriever'
 FROM species s
@@ -52,7 +58,10 @@ AND NOT EXISTS (
     AND b.breed_name = 'Persian'
 );
 
+
+-- =========================================
 -- SHELTER BRANCHES
+-- =========================================
 INSERT INTO shelter_branches (branch_name)
 SELECT 'Main Shelter'
 WHERE NOT EXISTS (
@@ -67,7 +76,10 @@ WHERE NOT EXISTS (
     WHERE branch_name = 'North Shelter'
 );
 
+
+-- =========================================
 -- PETS
+-- =========================================
 INSERT INTO pets (owner_id, name, species, breed, age, gender)
 SELECT u.id, 'Luna', 'Dog', 'Golden Retriever', 3, 'female'
 FROM users u
@@ -86,7 +98,10 @@ AND NOT EXISTS (
     WHERE p.owner_id = u.id AND p.name = 'Milo'
 );
 
+
+-- =========================================
 -- ANIMALS - MEMBER C
+-- =========================================
 INSERT INTO animals
 (name, species_id, breed_id, branch_id, age_months,
  gender, health_status, status, admission_date)
@@ -132,7 +147,10 @@ WHERE NOT EXISTS (
     SELECT 1 FROM animals WHERE name = 'Brownie'
 );
 
+
+-- =========================================
 -- FOSTER APPLICANTS - MEMBER C
+-- =========================================
 INSERT INTO foster_applicants
 (user_id, housing_type, experience_level, approval_status)
 SELECT u.id, 'House', 'Experienced', 'Approved'
@@ -143,7 +161,10 @@ AND NOT EXISTS (
     WHERE f.user_id = u.id
 );
 
+
+-- =========================================
 -- FOSTER ASSIGNMENTS - MEMBER C
+-- =========================================
 INSERT INTO foster_assignments
 (animal_id, applicant_id, start_date, end_date, status)
 SELECT a.animal_id, f.applicant_id,
@@ -157,4 +178,66 @@ AND NOT EXISTS (
     SELECT 1 FROM foster_assignments fa
     WHERE fa.animal_id = a.animal_id
     AND fa.applicant_id = f.applicant_id
+);
+
+
+-- =========================================
+-- SYSTEM SETTINGS
+-- =========================================
+INSERT INTO system_settings
+(setting_key, setting_value, description, updated_by)
+VALUES
+('minimum_quarantine_days', '14',
+ 'Minimum quarantine days before adoption readiness review',
+ (SELECT id FROM users WHERE email = 'gladys@example.com')),
+
+('require_medical_clearance', '1',
+ 'Require veterinary medical clearance',
+ (SELECT id FROM users WHERE email = 'gladys@example.com')),
+
+('require_completed_vaccinations', '1',
+ 'Require completed vaccinations before adoption readiness review',
+ (SELECT id FROM users WHERE email = 'gladys@example.com'));
+
+
+-- =========================================
+-- AUDIT LOGS
+-- =========================================
+INSERT INTO audit_logs
+(user_id, action, entity_type, entity_id, status, details)
+VALUES
+(
+ (SELECT id FROM users WHERE email = 'gladys@example.com'),
+ 'SETTING_UPDATED',
+ 'system_settings',
+ 1,
+ 'SUCCESS',
+ 'Updated minimum quarantine days to 14'
+),
+
+(
+ (SELECT id FROM users WHERE email = 'dralex@example.com'),
+ 'READINESS_CHECKED',
+ 'animals',
+ 1,
+ 'SUCCESS',
+ 'Animal readiness requirements checked'
+),
+
+(
+ (SELECT id FROM users WHERE email = 'gladys@example.com'),
+ 'SETTING_UPDATED',
+ 'system_settings',
+ 2,
+ 'SUCCESS',
+ 'Enabled medical clearance requirement'
+),
+
+(
+ (SELECT id FROM users WHERE email = 'dralex@example.com'),
+ 'MEDICAL_REVIEWED',
+ 'animals',
+ 2,
+ 'SUCCESS',
+ 'Animal medical records reviewed'
 );

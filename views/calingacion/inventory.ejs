@@ -1,0 +1,48 @@
+<div class="container mt-4">
+  <h2>Inventory Management</h2>
+  
+  <form id="addForm" class="row g-3 mb-4">
+    <div class="col-md-3"><input type="text" id="name" placeholder="Item Name" class="form-control" required></div>
+    <div class="col-md-3"><input type="text" id="category" placeholder="Category" class="form-control" required></div>
+    <div class="col-md-2"><input type="number" id="quantity" placeholder="Qty" class="form-control" required></div>
+    <div class="col-md-2"><input type="text" id="unit" placeholder="Unit" class="form-control" required></div>
+    <div class="col-md-2"><button class="btn btn-primary w-100">Add</button></div>
+  </form>
+
+  <table class="table table-bordered">
+    <thead><tr><th>ID</th><th>Name</th><th>Category</th><th>Qty</th><th>Action</th></tr></thead>
+    <tbody>
+      <% items.forEach(i => { %>
+        <tr>
+          <td><%= i.id %></td><td><%= i.item_name %></td><td><%= i.category %></td>
+          <td><%= i.quantity %> <%= i.unit %></td>
+          <td><button onclick="del('<%= i.id %>')" class="btn btn-danger btn-sm">Delete</button></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  document.getElementById('addForm').onsubmit = async (e) => {
+    e.preventDefault();
+    await fetch('/api/inventory', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        item_name: document.getElementById('name').value,
+        category: document.getElementById('category').value,
+        quantity: document.getElementById('quantity').value,
+        unit: document.getElementById('unit').value
+      })
+    });
+    location.reload();
+  };
+
+  async function del(id) {
+    if (confirm('Delete item?')) {
+      await fetch(`/api/inventory/${id}`, { method: 'DELETE' });
+      location.reload();
+    }
+  }
+</script>
