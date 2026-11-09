@@ -1,14 +1,50 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Species & Breeds - Paws and Haven</title>
+    <meta charset="UTF-8">
+    <title>Master Data - Paws and Haven</title>
 </head>
 <body>
-  <h2>Registered Animal Species</h2>
-  <ul>
-    <% species.forEach(s => { %>
-      <li><%= s.name %></li>
-    <% }) %>
-  </ul>
+    <h1>Master Data</h1>
+
+    <h2>Registered Animal Species</h2>
+    <ul>
+        <% species.forEach(s => { %>
+            <li><%= s.species_name %></li>
+        <% }) %>
+    </ul>
+
+    <h2>Registered Animal Breeds</h2>
+    <ul>
+        <% breeds.forEach(b => { %>
+            <li><%= b.breed_name %> - <%= b.species_name || 'No species assigned' %></li>
+        <% }) %>
+    </ul>
+
+    <h2>Registered Shelter Branches</h2>
+    <table border="1" cellpadding="8">
+        <thead>
+            <tr>
+                <th>Branch ID</th>
+                <th>Branch Name</th>
+                <th>Address</th>
+                <th>Contact Number</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% branches.forEach(branch => { %>
+                <tr>
+                    <td><%= branch.branch_id %></td>
+                    <td><%= branch.branch_name %></td>
+                    <td><%= branch.address || 'N/A' %></td>
+                    <td><%= branch.contact_number || 'N/A' %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+
+    <br>
+    <a href="/auth/profile">Back to Profile</a>
 </body>
 </html>

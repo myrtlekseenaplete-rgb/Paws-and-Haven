@@ -1,73 +1,85 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Medical Logs - Paws and Haven</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paws and Haven - Medical Logs</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f7f6; color: #333; }
+        h1, h2 { color: #2c3e50; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        form { display: grid; gap: 15px; margin-bottom: 40px; background: #fafafa; padding: 20px; border-radius: 6px; border: 1px solid #eee; }
+        label { font-weight: bold; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { background: #3498db; color: white; border: none; padding: 12px; font-size: 16px; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #2980b9; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #2c3e50; color: white; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+    </style>
 </head>
 <body>
-  <div style="max-width: 800px; margin: 40px auto; font-family: sans-serif;">
-    <h2>Animal Medical Records & Logs 🐾</h2>
-    <a href="/medical/reports" style="color: #4A90E2; text-decoration: none; font-weight: bold;">View Special SQL Join Reports &rarr;</a>
-    
-    <hr style="margin: 20px 0;">
+    <div class="container">
+        <h1>🐾 Paws and Haven</h1>
+        <h2>Add Medical Record</h2>
 
-    <h3>Add New Medical Record</h3>
-    <form action="/medical/create" method="POST" style="background: #f9f9f9; padding: 20px; border-radius: 8px;">
-      <div style="margin-bottom: 10px;">
-        <label>Animal ID:</label><br>
-        <input type="number" name="animal_id" required style="width: 100%; padding: 6px;">
-      </div>
-      <div style="margin-bottom: 10px;">
-        <label>Vet ID:</label><br>
-        <input type="number" name="vet_id" style="width: 100%; padding: 6px;">
-      </div>
-      <div style="margin-bottom: 10px;">
-        <label>Diagnosis:</label><br>
-        <textarea name="diagnosis" required style="width: 100%; padding: 6px;"></textarea>
-      </div>
-      <div style="margin-bottom: 10px;">
-        <label>Treatment:</label><br>
-        <textarea name="treatment" required style="width: 100%; padding: 6px;"></textarea>
-      </div>
-      <div style="margin-bottom: 10px;">
-        <label>Record Date:</label><br>
-        <input type="date" name="record_date" required style="width: 100%; padding: 6px;">
-      </div>
-      <div style="margin-bottom: 10px;">
-        <label>Notes:</label><br>
-        <textarea name="notes" style="width: 100%; padding: 6px;"></textarea>
-      </div>
-      <button type="submit" style="padding: 8px 15px; background: #28a745; color: white; border: none; cursor: pointer;">Save Record</button>
-    </form>
+        <form action="/medical" method="POST">
+            <div>
+                <label for="animal_id">Pet ID / Animal ID:</label>
+                <input type="number" id="animal_id" name="animal_id" required>
+            </div>
+            <div>
+                <label for="diagnosis">Diagnosis:</label>
+                <input type="text" id="diagnosis" name="diagnosis" required>
+            </div>
+            <div>
+                <label for="treatment">Treatment:</label>
+                <input type="text" id="treatment" name="treatment" required>
+            </div>
+            <div>
+                <label for="record_date">Date:</label>
+                <input type="date" id="record_date" name="record_date" required>
+            </div>
+            <div>
+                <label for="notes">Notes:</label>
+                <textarea id="notes" name="notes" rows="3"></textarea>
+            </div>
+            <button type="submit">Save Medical Record</button>
+        </form>
 
-    <h3 style="margin-top: 40px;">Existing Medical History</h3>
-    <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; border-collapse: collapse;">
-      <thead>
-        <tr style="background: #eee;">
-          <th>ID</th>
-          <th>Animal ID</th>
-          <th>Diagnosis</th>
-          <th>Treatment</th>
-          <th>Date</th>
-          <th>Vet Name</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% if (locals.records && records.length > 0) { %>
-          <% records.forEach(r => { %>
-            <tr>
-              <td><%= r.id %></td>
-              <td><%= r.animal_id %></td>
-              <td><%= r.diagnosis %></td>
-              <td><%= r.treatment %></td>
-              <td><%= r.record_date %></td>
-              <td><%= r.vet_name || 'N/A' %> (<%= r.specialization || 'General' %>)</td>
-            </tr>
-          <% }) %>
-        <% } else { %>
-          <tr><td colspan="6" style="text-align: center;">No medical records found.</td></tr>
-        <% } %>
-      </tbody>
-    </table>
-  </div>
+        <h2>Medical Audit Logs</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Pet ID</th>
+                    <th>Diagnosis</th>
+                    <th>Treatment</th>
+                    <th>Date</th>
+                    <th>Specialization</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (logs && logs.length > 0) { %>
+                    <% logs.forEach(log => { %>
+                        <tr>
+                            <td><%= log.id %></td>
+                            <td><%= log.animal_id %></td>
+                            <td><%= log.diagnosis %></td>
+                            <td><%= log.treatment %></td>
+                            <td><%= log.record_date ? new Date(log.record_date).toLocaleDateString() : 'N/A' %></td>
+                            <td><%= log.specialization %></td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="6" style="text-align: center;">No medical records found.</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
