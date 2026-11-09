@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Management - Paws and Haven</title>
+</head>
+<body>
+    <h1>User Management</h1>
+
+    <h2>Add New User</h2>
+
+    <form action="/users" method="POST">
+        <label>Full Name:</label>
+        <input type="text" name="full_name" required>
+        <br><br>
+
+        <label>Email:</label>
+        <input type="email" name="email" required>
+        <br><br>
+
+        <label>Password:</label>
+        <input type="password" name="password" required>
+        <br><br>
+
+        <label>Role:</label>
+        <select name="role" required>
+            <option value="admin">Admin</option>
+            <option value="vet">Vet</option>
+            <option value="staff">Staff</option>
+            <option value="owner">Owner</option>
+        </select>
+        <br><br>
+
+        <button type="submit">Add User</button>
+    </form>
+
+    <h2>Registered Users</h2>
+
+    <table border="1" cellpadding="8">
+        <tr>
+            <th>ID</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Actions</th>
+        </tr>
+
+        <% users.forEach(user => { %>
+            <tr>
+                <td><%= user.id %></td>
+                <td><%= user.full_name %></td>
+                <td><%= user.email %></td>
+                <td><%= user.role %></td>
+                <td>
+    <form action="/users/<%= user.id %>/update" method="POST">
+        <input type="text" name="full_name"
+               value="<%= user.full_name %>" required>
+
+        <input type="email" name="email"
+               value="<%= user.email %>" required>
+
+        <select name="role">
+            <option value="admin" <%= user.role === 'admin' ? 'selected' : '' %>>Admin</option>
+            <option value="vet" <%= user.role === 'vet' ? 'selected' : '' %>>Vet</option>
+            <option value="staff" <%= user.role === 'staff' ? 'selected' : '' %>>Staff</option>
+            <option value="owner" <%= user.role === 'owner' ? 'selected' : '' %>>Owner</option>
+        </select>
+
+        <button type="submit">Update</button>
+    </form>
+
+    <form action="/users/<%= user.id %>/delete" method="POST"
+          onsubmit="return confirm('Delete this user?');">
+        <button type="submit">Delete</button>
+    </form>
+</td>
+            </tr>
+        <% }) %>
+    </table>
+
+    <br>
+    <a href="/auth/profile">Back to Profile</a>
+</body>
+</html>
