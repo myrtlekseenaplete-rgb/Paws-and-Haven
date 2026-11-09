@@ -1,5 +1,4 @@
- feature/gladys-auth-pets
-Users Table
+ -- Users Table
 CREATE TABLE IF NOT EXISTS users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   full_name VARCHAR(100) NOT NULL,
@@ -9,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-Pets Table
+-- Pets Table
 CREATE TABLE IF NOT EXISTS pets (
   id INT AUTO_INCREMENT PRIMARY KEY,
   owner_id INT NOT NULL,
@@ -20,6 +19,32 @@ CREATE TABLE IF NOT EXISTS pets (
   gender ENUM('male', 'female') NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+  -- Species Table
+CREATE TABLE IF NOT EXISTS species (
+  species_id INT AUTO_INCREMENT PRIMARY KEY,
+  species_name VARCHAR(100) NOT NULL UNIQUE
+);
+
+-- Breeds Table
+CREATE TABLE IF NOT EXISTS breeds (
+  breed_id INT AUTO_INCREMENT PRIMARY KEY,
+  species_id INT DEFAULT NULL,
+  breed_name VARCHAR(100) NOT NULL,
+  FOREIGN KEY (species_id)
+    REFERENCES species(species_id)
+    ON DELETE SET NULL
+);
+
+-- Shelter Branches Table
+CREATE TABLE IF NOT EXISTS shelter_branches (
+  branch_id INT AUTO_INCREMENT PRIMARY KEY,
+  branch_name VARCHAR(150) NOT NULL,
+  address VARCHAR(255) DEFAULT NULL,
+  contact_number VARCHAR(30) DEFAULT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
   
 
@@ -47,7 +72,7 @@ CREATE TABLE IF NOT EXISTS foster_applicants (
   housing_type     ENUM('House','Apartment','Condo','Other') NOT NULL,
   experience_level ENUM('Beginner','Intermediate','Experienced') NOT NULL,
   approval_status  ENUM('Pending','Approved','Rejected') NOT NULL DEFAULT 'Pending',
-  FOREIGN KEY (user_id) REFERENCES users(user_id)
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS foster_assignments (
@@ -70,9 +95,9 @@ CREATE TABLE IF NOT EXISTS foster_assignments (
 
 
 
- MEMBER E (Myrtle): Medical Records & Vets
+ -- MEMBER E (Myrtle): Medical Records & Vets
 
-1. Veterinarians Table
+-- 1. Veterinarians Table
 CREATE TABLE IF NOT EXISTS veterinarians (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -81,7 +106,7 @@ CREATE TABLE IF NOT EXISTS veterinarians (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-2. Vaccination Schedules Table
+-- 2. Vaccination Schedules Table
 CREATE TABLE IF NOT EXISTS vaccination_schedules (
     id INT AUTO_INCREMENT PRIMARY KEY,
     animal_id INT NOT NULL, -- Links to Member C's animals/rescues table
@@ -92,7 +117,7 @@ CREATE TABLE IF NOT EXISTS vaccination_schedules (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-3. Medical Records Table
+-- 3. Medical Records Table
 CREATE TABLE IF NOT EXISTS medical_records (
     id INT AUTO_INCREMENT PRIMARY KEY,
     animal_id INT NOT NULL, -- Links to Member C's animals/rescues table
@@ -103,5 +128,4 @@ CREATE TABLE IF NOT EXISTS medical_records (
     notes TEXT,
     FOREIGN KEY (vet_id) REFERENCES veterinarians(id) ON DELETE SET NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-main
 );
