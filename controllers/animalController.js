@@ -1,4 +1,4 @@
-const Animal = require('../models/Animal');
+const Animal = require('../models/animal');
 
 const required = ['name','species_id','branch_id','age_months','gender','admission_date'];
 const missing = (b) => required.filter(f => b[f] === undefined || b[f] === '');

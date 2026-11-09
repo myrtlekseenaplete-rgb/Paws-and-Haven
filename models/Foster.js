@@ -1,5 +1,5 @@
 const db = require('../config/db');
-const Animal = require('./Animal');
+const Animal = require('./animal');
 
 const Foster = {
   // ----- Applicants -----
