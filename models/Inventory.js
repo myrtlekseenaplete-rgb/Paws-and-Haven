@@ -1,7 +1,7 @@
 const db = require('../config/db');
 
 const Inventory = {
-  // GET all inventory items
+  
   getAll: async () => {
     const [rows] = await db.query('SELECT * FROM inventory');
     return rows;
