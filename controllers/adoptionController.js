@@ -1,4 +1,4 @@
-const Adoption = require("../models/adoptionModel");
+const Adoption = require("../models/Adoption");
 
 const validStatuses = ["Pending", "Approved", "Rejected", "Completed"];
 

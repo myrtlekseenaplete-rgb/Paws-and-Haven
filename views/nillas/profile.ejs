@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile - Paws and Haven</title>
+</head>
+<body>
+    <h1>Welcome, <%= user.full_name %>!</h1>
+
+    <h2>Your Profile</h2>
+    <p><strong>Name:</strong> <%= user.full_name %></p>
+    <p><strong>Email:</strong> <%= user.email %></p>
+    <p><strong>Role:</strong> <%= user.role %></p>
+
+    <h2>Navigation</h2>
+    <ul>
+        <li><a href="/master-data">Master Data</a></li>
+        <li><a href="/users">User Management</a></li>
+        <li><a href="/reports/animals">Animal Report</a></li>
+    </ul>
+
+    <form action="/auth/logout" method="POST">
+        <button type="submit">Logout</button>
+    </form>
+</body>
+</html>
