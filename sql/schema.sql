@@ -22,6 +22,86 @@ CREATE TABLE IF NOT EXISTS pets (
   FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
 
   
+
+
+-- MEMBER C: Rodriguez
+CREATE TABLE IF NOT EXISTS animals (
+  animal_id      INT AUTO_INCREMENT PRIMARY KEY,
+  name           VARCHAR(100) NOT NULL,
+  species_id     INT NOT NULL,
+  breed_id       INT NULL,
+  branch_id      INT NOT NULL,
+  age_months     INT NOT NULL CHECK (age_months >= 0),
+  gender         ENUM('Male','Female') NOT NULL,
+  health_status  VARCHAR(100) DEFAULT 'Healthy',
+  status         ENUM('Available','Fostered','Adopted') NOT NULL DEFAULT 'Available',
+  admission_date DATE NOT NULL,
+  FOREIGN KEY (species_id) REFERENCES species(species_id),
+  FOREIGN KEY (breed_id)   REFERENCES breeds(breed_id),
+  FOREIGN KEY (branch_id)  REFERENCES shelter_branches(branch_id)
+);
+
+CREATE TABLE IF NOT EXISTS foster_applicants (
+  applicant_id     INT AUTO_INCREMENT PRIMARY KEY,
+  user_id          INT NOT NULL,
+  housing_type     ENUM('House','Apartment','Condo','Other') NOT NULL,
+  experience_level ENUM('Beginner','Intermediate','Experienced') NOT NULL,
+  approval_status  ENUM('Pending','Approved','Rejected') NOT NULL DEFAULT 'Pending',
+  FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE IF NOT EXISTS foster_assignments (
+  assignment_id INT AUTO_INCREMENT PRIMARY KEY,
+  animal_id     INT NOT NULL,
+  applicant_id  INT NOT NULL,
+  start_date    DATE NOT NULL,
+  end_date      DATE NULL,
+  status        ENUM('Active','Completed','Cancelled') NOT NULL DEFAULT 'Active',
+  FOREIGN KEY (animal_id)    REFERENCES animals(animal_id),
+  FOREIGN KEY (applicant_id) REFERENCES foster_applicants(applicant_id)
+);
+
+
+CREATE TABLE IF NOT EXISTS system_settings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    setting_key VARCHAR(100) NOT NULL UNIQUE,
+    setting_value TEXT NOT NULL,
+    description TEXT,
+    updated_by INT,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (updated_by)
+        REFERENCES users(id)
+        ON DELETE SET NULL
+);
+
+
+
+CREATE TABLE IF NOT EXISTS audit_logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    action VARCHAR(100) NOT NULL,
+    entity_type VARCHAR(100),
+    entity_id INT,
+    old_values JSON,
+    new_values JSON,
+    status ENUM('SUCCESS', 'FAILED') DEFAULT 'SUCCESS',
+    details TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE SET NULL
+);
+
+
+
+
+
+
+
+
  MEMBER E (Myrtle): Medical Records & Vets
 
 1. Veterinarians Table
