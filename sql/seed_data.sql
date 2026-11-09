@@ -97,7 +97,27 @@ AND NOT EXISTS (
     SELECT 1 FROM pets p
     WHERE p.owner_id = u.id AND p.name = 'Milo'
 );
+-- ============================================
+-- ADOPTION - MEMBER B
+-- ============================================
 
+-- 1. Adoption Applications
+INSERT INTO adoption_applications (user_id, animal_id, application_date, status, notes)
+SELECT u.id, a.animal_id, '2026-10-15', 'approved', 'Home check passed'
+FROM users u, animals a
+WHERE u.email = 'gladys@example.com' AND a.name = 'Bantay'
+AND NOT EXISTS (
+    SELECT 1 FROM adoption_applications WHERE user_id = u.id AND animal_id = a.animal_id
+);
+
+-- 2. Adoptions Record
+INSERT INTO adoptions (application_id, user_id, animal_id, adoption_date, contract_signed)
+SELECT app.application_id, app.user_id, app.animal_id, '2026-10-20', 1
+FROM adoption_applications app
+WHERE app.status = 'approved'
+AND NOT EXISTS (
+    SELECT 1 FROM adoptions WHERE application_id = app.application_id
+);
 
 -- =========================================
 -- ANIMALS - MEMBER C

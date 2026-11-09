@@ -45,9 +45,39 @@ CREATE TABLE IF NOT EXISTS shelter_branches (
   contact_number VARCHAR(30) DEFAULT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+-- MEMBER B: Chavez
+  CREATE TABLE shelter_branches (
+    branch_id INT PRIMARY KEY,
+    branch_name VARCHAR(100)
+);ss
 
-  
+CREATE TABLE animals (
+    animal_id INT PRIMARY KEY,
+    animal_name VARCHAR(100),
+    species_id INT,
+    branch_id INT,
+    FOREIGN KEY (species_id) REFERENCES species(species_id),
+    FOREIGN KEY (branch_id) REFERENCES shelter_branches(branch_id)
+);
 
+CREATE TABLE adoption_applications (
+    application_id INT PRIMARY KEY,
+    user_id INT,
+    animal_id INT,
+    status VARCHAR(20),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (animal_id) REFERENCES animals(animal_id)
+);
+
+CREATE TABLE adoptions (
+    adoption_id INT PRIMARY KEY,
+    application_id INT,
+    user_id INT,
+    animal_id INT,
+    FOREIGN KEY (application_id) REFERENCES adoption_applications(application_id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (animal_id) REFERENCES animals(animal_id)
+)
 
 -- MEMBER C: Rodriguez
 CREATE TABLE IF NOT EXISTS animals (
